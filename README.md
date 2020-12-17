@@ -1,3 +1,2 @@
-# plugin-aws-personal-health-dashboard
-
-Plugins for AWS Personal Health Dashboard Collector
+# plugin-aws-health
+Plugin for AWS Personal Health

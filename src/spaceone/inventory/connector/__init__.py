@@ -1,0 +1,1 @@
+from spaceone.inventory.connector.personal_health_dashboard import PersonalHealthDashboardConnector
