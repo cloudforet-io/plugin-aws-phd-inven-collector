@@ -30,7 +30,7 @@ class PersonalHealthDashboardManager(AWSManager):
         event_arns = [event['arn'] for event in events]
 
         # event_arns Must have length less than or equal to 10. Divide event_arns under 10.
-        divide_event_arns_list = self._divide_by_event(event_arns)
+        divide_event_arns_list = list(self._divide_by_event(event_arns))
 
         filter_queries = []
         for divide_event_arns in divide_event_arns_list:
