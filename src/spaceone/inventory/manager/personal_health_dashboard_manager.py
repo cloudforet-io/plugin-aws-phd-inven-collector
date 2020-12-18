@@ -7,6 +7,8 @@ from spaceone.inventory.model.personal_health_dashboard.data import Event, Affec
 from spaceone.inventory.model.personal_health_dashboard.cloud_service import EventResource, EventResponse
 from spaceone.inventory.model.personal_health_dashboard.cloud_service_type import CLOUD_SERVICE_TYPES
 
+DEFAULT_DAY_RANGE = 30
+
 
 class PersonalHealthDashboardManager(AWSManager):
     connector_name = 'PersonalHealthDashboardConnector'
@@ -108,7 +110,7 @@ class PersonalHealthDashboardManager(AWSManager):
         options = params.get('options', {})
 
         to_date = datetime.datetime.now()
-        from_date = to_date + datetime.timedelta(days=-14)      # 2 weeks ago
+        from_date = to_date - datetime.timedelta(days=DEFAULT_DAY_RANGE)      # 2 weeks ago
 
         filter_query = {'startTimes': [{'from': from_date, 'to': to_date}]}
 
