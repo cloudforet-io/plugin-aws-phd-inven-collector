@@ -15,7 +15,7 @@ cst_phd.tags = {
 
 cst_phd._metadata = CloudServiceTypeMeta.set_meta(
     fields=[
-        TextDyField.data_source('Event', 'data.event_type_code'),
+        TextDyField.data_source('Event', 'data.event_title'),
         TextDyField.data_source('Status', 'data.status_code'),
         EnumDyField.data_source('Status', 'data.status_code', default_state={
             'safe': ['closed'],

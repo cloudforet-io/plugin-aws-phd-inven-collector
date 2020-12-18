@@ -61,6 +61,7 @@ class PersonalHealthDashboardManager(AWSManager):
                 affected_resources_data.append(AffectedResource(affected_resource, strict=False))
 
             event.update({
+                'event_title': self._convert_event_tile_from_code(event['eventTypeCode']),
                 'account_id': params['account_id'],
                 'description': self._find_event_description(event_details, event['arn']),
                 'affected_resources': affected_resources_data
@@ -164,3 +165,13 @@ class PersonalHealthDashboardManager(AWSManager):
     def _divide_by_event(event_arns, divide_num=10):
         for i in range(0, len(event_arns), divide_num):
             yield event_arns[i:i + divide_num]
+
+    @staticmethod
+    def _convert_event_tile_from_code(event_code):
+        try:
+            event_title = event_code.replace('AWS_', '').replace('_', ' ').title()
+        except Exception as e:
+            event_title = event_code
+
+        return event_title
+

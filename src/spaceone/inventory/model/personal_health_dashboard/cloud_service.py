@@ -7,8 +7,9 @@ from spaceone.inventory.libs.schema.cloud_service import CloudServiceResource, C
 
 
 event_meta = ItemDynamicLayout.set_fields('Event', fields=[
-    TextDyField.data_source('Event', 'data.event_type_code'),
+    TextDyField.data_source('Event', 'data.event_title'),
     TextDyField.data_source('ARN', 'data.arn'),
+    TextDyField.data_source('Event Code', 'data.event_type_code'),
     EnumDyField.data_source('Status', 'data.status_code', default_state={
         'safe': ['closed'],
         'warning': ['upcoming'],
