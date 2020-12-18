@@ -5,10 +5,12 @@ from spaceone.inventory.libs.schema.base import ReferenceModel
 from spaceone.inventory.connector.personal_health_dashboard import PersonalHealthDashboardConnector
 from spaceone.inventory.model.personal_health_dashboard.data import Event, AffectedResource
 from spaceone.inventory.model.personal_health_dashboard.cloud_service import EventResource, EventResponse
+from spaceone.inventory.model.personal_health_dashboard.cloud_service_type import CLOUD_SERVICE_TYPES
 
 
 class PersonalHealthDashboardManager(AWSManager):
     connector_name = 'PersonalHealthDashboardConnector'
+    cloud_service_types = CLOUD_SERVICE_TYPES
 
     def collect_cloud_services(self, params):
         print("** Personal Health Dashboard Start **")
