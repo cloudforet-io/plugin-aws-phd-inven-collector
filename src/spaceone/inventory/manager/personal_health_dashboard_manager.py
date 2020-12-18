@@ -29,15 +29,23 @@ class PersonalHealthDashboardManager(AWSManager):
         events = phd_conn.describe_events(**event_query)
         event_arns = [event['arn'] for event in events]
 
-        if event_arns:
-            filter_query = {'filter': {'eventArns': event_arns}}
-        else:
-            filter_query = {}
+        # event_arns Must have length less than or equal to 10. Divide event_arns under 10.
+        divide_event_arns_list = self._divide_by_event(event_arns)
 
-        affected_resources = phd_conn.describe_affected_entities(**filter_query)
+        filter_queries = []
+        for divide_event_arns in divide_event_arns_list:
+            filter_queries.append({'filter': {'eventArns': divide_event_arns}})
+
+        affected_resources = []
+        for affected_resource_query in filter_queries:
+            affected_resources.extend(phd_conn.describe_affected_entities(**affected_resource_query))
+
+        # Filtering 'UNKNOWN' affected entities
         affected_resources = self._filter_affected_entities(affected_resources)
 
-        event_details = phd_conn.describe_event_details(event_arns)
+        event_details = []
+        for divide_event_arns in divide_event_arns_list:
+            event_details.extend(phd_conn.describe_event_details(divide_event_arns))
 
         for event in events:
             event_affected_resources = self._find_affected_resources(affected_resources, event['arn'])
@@ -151,3 +159,8 @@ class PersonalHealthDashboardManager(AWSManager):
     @staticmethod
     def _filter_affected_entities(affected_resources):
         return [af for af in affected_resources if af.get('entityValue') != 'UNKNOWN']
+
+    @staticmethod
+    def _divide_by_event(event_arns, divide_num=10):
+        for i in range(0, len(event_arns), divide_num):
+            yield event_arns[i:i + divide_num]
