@@ -25,6 +25,7 @@ class Event(Model):
     status_code = StringType(deserialize_from='statusCode', choices=('open', 'closed', 'upcoming'))
     event_scope_code = StringType(deserialize_from='eventScopeCode', choices=('PUBLIC', 'ACCOUNT_SPECIFIC', 'NONE'))
     event_type_code = StringType(deserialize_from="eventTypeCode")
+    event_title = StringType(default='')
     event_type_category = StringType(deserialize_from="eventTypeCategory",
                                      choices=('issue', 'accountNotification', 'scheduledChange', 'investigation'))
     availability_zone = StringType(deserialize_from='availabilityZone', serialize_when_none=False)
