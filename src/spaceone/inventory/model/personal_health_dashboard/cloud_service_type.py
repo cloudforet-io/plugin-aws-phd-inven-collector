@@ -1,4 +1,4 @@
-from spaceone.inventory.libs.schema.metadata.dynamic_field import TextDyField, SearchField
+from spaceone.inventory.libs.schema.metadata.dynamic_field import TextDyField, SearchField, DateTimeDyField, EnumDyField
 from spaceone.inventory.libs.schema.cloud_service_type import CloudServiceTypeResource, CloudServiceTypeResponse, \
     CloudServiceTypeMeta
 
@@ -17,11 +17,16 @@ cst_phd._metadata = CloudServiceTypeMeta.set_meta(
     fields=[
         TextDyField.data_source('Event', 'data.event_type_code'),
         TextDyField.data_source('Status', 'data.status_code'),
+        EnumDyField.data_source('Status', 'data.status_code', default_state={
+            'safe': ['closed'],
+            'warning': ['upcoming'],
+            'alert': ['open']
+        }),
         TextDyField.data_source('Event Category', 'data.event_type_category'),
         TextDyField.data_source('Region', 'region_code'),
-        TextDyField.data_source('Start Time', 'data.start_time'),
-        TextDyField.data_source('Last Update Time', 'data.last_update_time'),
         TextDyField.data_source('Affected Resources', 'data.affected_resource_display'),
+        DateTimeDyField.data_source('Start Time', 'data.start_time'),
+        DateTimeDyField.data_source('Last Update Time', 'data.last_update_time'),
     ],
     search=[
         SearchField.set(name='ARN', key='data.arn'),

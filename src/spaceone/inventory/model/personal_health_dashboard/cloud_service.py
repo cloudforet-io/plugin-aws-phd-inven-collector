@@ -1,7 +1,7 @@
 from schematics.types import ModelType, StringType, PolyModelType
 
 from spaceone.inventory.model.personal_health_dashboard.data import Event
-from spaceone.inventory.libs.schema.metadata.dynamic_field import TextDyField
+from spaceone.inventory.libs.schema.metadata.dynamic_field import TextDyField, DateTimeDyField, EnumDyField
 from spaceone.inventory.libs.schema.metadata.dynamic_layout import ItemDynamicLayout, TableDynamicLayout
 from spaceone.inventory.libs.schema.cloud_service import CloudServiceResource, CloudServiceResponse, CloudServiceMeta
 
@@ -9,13 +9,18 @@ from spaceone.inventory.libs.schema.cloud_service import CloudServiceResource, C
 event_meta = ItemDynamicLayout.set_fields('Event', fields=[
     TextDyField.data_source('Event', 'data.event_type_code'),
     TextDyField.data_source('ARN', 'data.arn'),
-    TextDyField.data_source('Status', 'data.status_code'),
+    EnumDyField.data_source('Status', 'data.status_code', default_state={
+        'safe': ['closed'],
+        'warning': ['upcoming'],
+        'alert': ['open']
+    }),
     TextDyField.data_source('Event Scope Code', 'data.event_scope_code'),
     TextDyField.data_source('Event Category', 'data.event_type_category'),
     TextDyField.data_source('Region', 'region_code'),
     TextDyField.data_source('Description', 'data.description'),
-    TextDyField.data_source('Start Time', 'data.start_time'),
-    TextDyField.data_source('Last Update Time', 'data.last_update_time'),
+    DateTimeDyField.data_source('Start Time', 'data.start_time'),
+    DateTimeDyField.data_source('Last Update Time', 'data.last_update_time'),
+    DateTimeDyField.data_source('End Time', 'data.end_time'),
 ])
 
 affected_resources_meta = TableDynamicLayout.set_fields('Affected Resources', 'data.affected_resources', fields=[
