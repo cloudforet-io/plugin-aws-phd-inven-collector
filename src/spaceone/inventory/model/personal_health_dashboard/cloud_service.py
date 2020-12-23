@@ -26,6 +26,7 @@ event_meta = ItemDynamicLayout.set_fields('Event', fields=[
 
 affected_resources_meta = TableDynamicLayout.set_fields('Affected Resources', 'data.affected_resources', fields=[
     TextDyField.data_source('Account ID', 'aws_account_id'),
+    TextDyField.data_source('Event Type', 'entity_type'),
     TextDyField.data_source('Entity Value', 'entity_value'),
 ])
 
