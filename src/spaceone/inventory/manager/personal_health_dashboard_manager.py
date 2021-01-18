@@ -69,7 +69,9 @@ class PersonalHealthDashboardManager(AWSManager):
 
             if affected_resources_data:
                 event.update({
-                    'affected_resource_display': f'{len(affected_resources_data)} entity'
+                    'affected_resource_display': f'{len(affected_resources_data)} entity',
+                    'has_affected_resources': True,
+                    'affected_resources_count': len(affected_resources_data)
                 })
 
             event_data = Event(event, strict=False)
