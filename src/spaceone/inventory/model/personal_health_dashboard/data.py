@@ -1,5 +1,5 @@
 from schematics import Model
-from schematics.types import ModelType, ListType, StringType, DateTimeType, IntType
+from schematics.types import ModelType, ListType, StringType, DateTimeType, BooleanType, IntType
 
 
 class Tags(Model):
@@ -34,6 +34,8 @@ class Event(Model):
     end_time = DateTimeType(deserialize_from="endTime")
     affected_resources = ListType(ModelType(AffectedResource), default=[])
     affected_resource_display = StringType(default='-')
+    affected_resources_count = IntType(default=0)
+    has_affected_resources = BooleanType(default=False)
     description = StringType(default='')
     region = StringType()
     account_id = StringType(default="")
