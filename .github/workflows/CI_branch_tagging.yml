@@ -47,7 +47,7 @@ jobs:
       - name: if dev version, don't deploy public
         id: determine_dev
         run: |
-          if [[ !(${{ env.TAG }} =~ ^(.*)-dev(.*)$) ]];
+          if [[ (${{ env.TAG }} =~ ^(.*)-dev(.*)$) ]];
             then echo "::set-output name=IS_DEV::true"
             else echo "::set-output name=IS_DEV::false"
           fi
@@ -92,8 +92,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.BRANCH }}
-      - name: delete CI workflow
-        run: rm -rf .github
       - name: git config
         run: |
           git config user.name github-actions
