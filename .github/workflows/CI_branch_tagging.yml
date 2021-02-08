@@ -50,6 +50,7 @@ jobs:
           if [[ !(${{ env.TAG }} =~ ^(.*)-dev(.*)$) ]];
             then echo "::set-output name=IS_DEV::true"
             else echo "::set-output name=IS_DEV::false"
+          fi
       - name: debugging
         run: |
           echo ${{env.TAG}}
