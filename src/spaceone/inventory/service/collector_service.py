@@ -92,4 +92,3 @@ class CollectorService(BaseService):
         aws_connector.service = 'sts'
         aws_connector.set_client(region)
         return aws_connector.client.get_caller_identity()['Account']
-
