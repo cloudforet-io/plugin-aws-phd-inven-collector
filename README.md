@@ -49,4 +49,4 @@ authentication privilege for followings:
 ### Ver 1.4
 
 * Add name field for standardization.
-
+* Remove to_date filter in query to collect future data all
