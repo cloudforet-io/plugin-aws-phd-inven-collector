@@ -77,6 +77,7 @@ class PersonalHealthDashboardManager(AWSManager):
 
             event_data = Event(event, strict=False)
             event_resource = EventResource({
+                'name': event_data.event_title,
                 'data': event_data,
                 'region_code': event['region'],
                 'reference': ReferenceModel(event_data.reference())
@@ -122,10 +123,12 @@ class PersonalHealthDashboardManager(AWSManager):
         options = params.get('options', {})
 
         now = datetime.datetime.now()
-        to_date = now + datetime.timedelta(days=DEFAULT_DAY_TO_RANGE)
+        # to_date = now + datetime.timedelta(days=DEFAULT_DAY_TO_RANGE)
         from_date = now - datetime.timedelta(days=DEFAULT_DAY_FROM_RANGE)
 
-        filter_query = {'startTimes': [{'from': from_date, 'to': to_date}]}
+        # filter_query = {'startTimes': [{'from': from_date, 'to': to_date}]}
+
+        filter_query = {'startTimes': [{'from': from_date}]}
 
         if 'eventStatusCodes' in options:
             filter_query.update({'eventStatusCodes': options['eventStatusCodes']})
