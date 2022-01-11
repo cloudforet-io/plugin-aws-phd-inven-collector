@@ -1,11 +1,15 @@
 import time
 import datetime
+import logging
+
 from spaceone.inventory.libs.manager import AWSManager
 from spaceone.inventory.libs.schema.base import ReferenceModel
 from spaceone.inventory.connector.personal_health_dashboard import PersonalHealthDashboardConnector
 from spaceone.inventory.model.personal_health_dashboard.data import Event, AffectedResource
 from spaceone.inventory.model.personal_health_dashboard.cloud_service import EventResource, EventResponse
 from spaceone.inventory.model.personal_health_dashboard.cloud_service_type import CLOUD_SERVICE_TYPES
+
+_LOGGER = logging.getLogger(__name__)
 
 DEFAULT_DAY_TO_RANGE = 30
 DEFAULT_DAY_FROM_RANGE = 30
@@ -16,7 +20,7 @@ class PersonalHealthDashboardManager(AWSManager):
     cloud_service_types = CLOUD_SERVICE_TYPES
 
     def collect_cloud_services(self, params):
-        print("** Personal Health Dashboard Start **")
+        _LOGGER.debug("** Personal Health Dashboard Start **")
         start_time = time.time()
         phd_conn: PersonalHealthDashboardConnector = self.locator.get_connector(self.connector_name, **params)
         phd_conn.set_client()
@@ -85,7 +89,7 @@ class PersonalHealthDashboardManager(AWSManager):
 
             event_resources.append(EventResponse({'resource': event_resource}))
 
-        print(f' Personal Health Dashboard Finished {time.time() - start_time} Seconds')
+        _LOGGER.debug(f' Personal Health Dashboard Finished {time.time() - start_time} Seconds')
         return event_resources
 
     @staticmethod
@@ -181,4 +185,3 @@ class PersonalHealthDashboardManager(AWSManager):
             event_title = event_code
 
         return event_title
-

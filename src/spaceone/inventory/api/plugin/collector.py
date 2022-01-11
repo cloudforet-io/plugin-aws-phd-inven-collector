@@ -30,7 +30,7 @@ class Collector(BaseAPI, collector_pb2_grpc.CollectorServicer):
         collector_svc: CollectorService = self.locator.get_service('CollectorService', metadata)
 
         with collector_svc:
-            for resource in collector_svc.list_resources(params):
+            for resource in collector_svc.collect(params):
                 res = {
                     'state': (resource['state']),
                     'message': '',
