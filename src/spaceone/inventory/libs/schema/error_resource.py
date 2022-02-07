@@ -2,6 +2,7 @@ from schematics import Model
 from schematics.types import StringType, ModelType
 from .base import BaseResponse
 
+
 class ErrorResource(Model):
     resource_type = StringType(default='inventory.CloudService')
     provider = StringType(default='aws')
@@ -13,4 +14,5 @@ class ErrorResource(Model):
 class ErrorResourceResponse(BaseResponse):
     state = StringType(default='FAILURE')
     resource_type = StringType(default='inventory.ErrorResource')
+    message = StringType(default='')
     resource = ModelType(ErrorResource, default={})

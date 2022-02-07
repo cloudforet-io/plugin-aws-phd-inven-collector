@@ -5,3 +5,4 @@ SUPPORTED_SCHEDULES = ['hours']
 DEFAULT_REGION = 'us-east-1'
 FILTER_FORMAT = []
 EXECUTE_MANAGER = 'PersonalHealthDashboardManager'
+ARN_DEFAULT_PARTITION = 'aws'

@@ -1,9 +1,11 @@
 import time
 import datetime
 import logging
+import json
 
 from spaceone.inventory.libs.manager import AWSManager
 from spaceone.inventory.libs.schema.base import ReferenceModel
+from spaceone.inventory.libs.schema.error_resource import ErrorResourceResponse
 from spaceone.inventory.connector.personal_health_dashboard import PersonalHealthDashboardConnector
 from spaceone.inventory.model.personal_health_dashboard.data import Event, AffectedResource
 from spaceone.inventory.model.personal_health_dashboard.cloud_service import EventResource, EventResponse
@@ -17,6 +19,8 @@ DEFAULT_DAY_FROM_RANGE = 30
 
 class PersonalHealthDashboardManager(AWSManager):
     connector_name = 'PersonalHealthDashboardConnector'
+    cloud_service_group = 'PersonalHealthDashboard'
+    cloud_service_type = 'inventory.CloudService'
     cloud_service_types = CLOUD_SERVICE_TYPES
 
     def collect_cloud_services(self, params):
@@ -53,47 +57,54 @@ class PersonalHealthDashboardManager(AWSManager):
             event_details.extend(phd_conn.describe_event_details(divide_event_arns))
 
         for event in events:
-            event_affected_resources = self._find_affected_resources(affected_resources, event['arn'])
+            try:
+                event_affected_resources = self._find_affected_resources(affected_resources, event['arn'])
 
-            affected_resources_data = []
-            for affected_resource in event_affected_resources:
-                entity_type, entity_value = self._get_entity_type_value(affected_resource)
-                affected_resource.update({
-                    'entity_type': entity_type,
-                    'entity_value': entity_value,
-                    'tags': self._convert_tag_format(affected_resource.get('tags', {}))
-                })
-                affected_resources_data.append(AffectedResource(affected_resource, strict=False))
+                affected_resources_data = []
+                for affected_resource in event_affected_resources:
+                    entity_type, entity_value = self._get_entity_type_value(affected_resource)
+                    affected_resource.update({
+                        'entity_type': entity_type,
+                        'entity_value': entity_value,
+                        'tags': self._convert_tag_format(affected_resource.get('tags', {}))
+                    })
+                    affected_resources_data.append(AffectedResource(affected_resource, strict=False))
 
-            event.update({
-                'event_title': self._convert_event_tile_from_code(event['eventTypeCode']),
-                'account_id': params['account_id'],
-                'description': self._find_event_description(event_details, event['arn']),
-                'affected_resources': affected_resources_data
-            })
-
-            if affected_resources_data:
                 event.update({
-                    'affected_resource_display': f'{len(affected_resources_data)} entity',
-                    'has_affected_resources': True,
-                    'affected_resources_count': len(affected_resources_data)
+                    'event_title': self._convert_event_tile_from_code(event['eventTypeCode']),
+                    'account_id': params['account_id'],
+                    'description': self._find_event_description(event_details, event['arn']),
+                    'affected_resources': affected_resources_data
                 })
 
-            event_data = Event(event, strict=False)
-            event_resource = EventResource({
-                'name': event_data.event_title,
-                'data': event_data,
-                'region_code': event['region'],
-                'reference': ReferenceModel(event_data.reference())
-            })
+                if affected_resources_data:
+                    event.update({
+                        'affected_resource_display': f'{len(affected_resources_data)} entity',
+                        'has_affected_resources': True,
+                        'affected_resources_count': len(affected_resources_data)
+                    })
 
-            event_resources.append(EventResponse({'resource': event_resource}))
+                event_data = Event(event, strict=False)
+                event_resource = EventResource({
+                    'name': event_data.event_title,
+                    'data': event_data,
+                    'region_code': event.get('region', ''),
+                    'reference': ReferenceModel(event_data.reference())
+                })
+
+                event_resources.append(EventResponse({'resource': event_resource}))
+            except Exception as e:
+                resource_arn = event.get('arn', '')
+                service = event.get('service', '')
+
+                error_resource_response = self.generate_error(resource_arn, service, e)
+                event_resources.append(error_resource_response)
 
         _LOGGER.debug(f' Personal Health Dashboard Finished {time.time() - start_time} Seconds')
         return event_resources
 
     @staticmethod
-    def _merge_flagged_resources(check_id_data, checkResult):
+    def _merge_flagged_resources(check_id_data, check_result):
         """
         Return: list
         """
@@ -101,8 +112,8 @@ class PersonalHealthDashboardManager(AWSManager):
         headers.extend(check_id_data.metadata)
 
         res_list = []
-        if 'flaggedResources' in checkResult:
-            flagged_resources = checkResult['flaggedResources']
+        if 'flaggedResources' in check_result:
+            flagged_resources = check_result['flaggedResources']
             for res in flagged_resources:
                 result = [res['status']]
                 if 'region' in res:
@@ -183,5 +194,25 @@ class PersonalHealthDashboardManager(AWSManager):
             event_title = event_code.replace('AWS_', '').replace('_', ' ').title()
         except Exception as e:
             event_title = event_code
+            _LOGGER.info(f'{e}')
 
         return event_title
+
+    def generate_error(self, resource_arn, service, error_message):
+        _LOGGER.error(f'[generate_error] [{service}] {error_message}')
+
+        if isinstance(error_message, dict):
+            error_resource_response = ErrorResourceResponse(
+                {'message': json.dumps(error_message),
+                 'resource': {'resource_id': resource_arn,
+                              'cloud_service_group': self.cloud_service_group,
+                              'cloud_service_type': self.cloud_service_type}})
+
+        else:
+            error_resource_response = ErrorResourceResponse(
+                {'message': str(error_message),
+                 'resource': {'resource_id': resource_arn,
+                              'cloud_service_group': self.cloud_service_group,
+                              'cloud_service_type': self.cloud_service_type}})
+
+        return error_resource_response

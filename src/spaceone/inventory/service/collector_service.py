@@ -9,11 +9,11 @@ from spaceone.inventory.conf.cloud_service_conf import *
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler
 class CollectorService(BaseService):
     def __init__(self, metadata):
         super().__init__(metadata)
 
+    @transaction
     @check_required(['options'])
     def init(self, params):
         """ init plugin by options
@@ -60,20 +60,16 @@ class CollectorService(BaseService):
         start_time = time.time()
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKER) as executor:
-            _LOGGER.debug("[ EXECUTOR START ]")
             future_executors = []
-            _LOGGER.debug(f'@@@ {EXECUTE_MANAGER} @@@')
+
             _manager = self.locator.get_manager(EXECUTE_MANAGER)
             future_executors.append(executor.submit(_manager.collect_resources, params))
 
             for future in concurrent.futures.as_completed(future_executors):
-                try:
-                    for resource in future.result():
-                        yield resource.to_primitive()
-                except Exception as e:
-                    _LOGGER.error(f'failed to result {e}')
+                for resource in future.result():
+                    yield resource.to_primitive()
 
-        _LOGGER.debug(f'TOTAL TIME : {time.time() - start_time} Seconds')
+        _LOGGER.debug(f'[collect] TOTAL FINISHED TIME : {time.time() - start_time} Seconds')
 
     @staticmethod
     def get_account_id(secret_data, region=DEFAULT_REGION):
