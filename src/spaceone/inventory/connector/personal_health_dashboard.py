@@ -31,10 +31,10 @@ class PersonalHealthDashboardConnector(AWSConnector):
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                print(e)
+                _LOGGER.info(e)
 
         except Exception as e:
-            print(f'Fail to describe events: {e}')
+            _LOGGER.info(f'Fail to describe events: {e}')
             return []
 
     def describe_event_details(self, event_arns):
@@ -46,10 +46,10 @@ class PersonalHealthDashboardConnector(AWSConnector):
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                print(e)
+                _LOGGER.info(e)
 
         except Exception as e:
-            print(f'Fail to describe event details: {e}')
+            _LOGGER.info(f'Fail to describe event details: {e}')
             return []
 
     def describe_entity_aggregates(self, event_arn, **query):
@@ -63,10 +63,10 @@ class PersonalHealthDashboardConnector(AWSConnector):
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                print(e)
+                _LOGGER.info(e)
 
         except Exception as e:
-            print(f'Fail to describe entity aggregates: {e}')
+            _LOGGER.info(f'Fail to describe entity aggregates: {e}')
             return []
 
     def describe_affected_entities(self, **query):
@@ -86,10 +86,8 @@ class PersonalHealthDashboardConnector(AWSConnector):
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                print(e)
+                _LOGGER.info(e)
 
         except Exception as e:
-            print(f'Fail to describe affected entities: {e}')
+            _LOGGER.info(f'Fail to describe affected entities: {e}')
             return []
-
-

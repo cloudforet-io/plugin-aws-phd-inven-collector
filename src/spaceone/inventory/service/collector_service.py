@@ -4,26 +4,16 @@ import concurrent.futures
 
 from spaceone.core.service import *
 from spaceone.inventory.libs.connector import *
-
+from spaceone.inventory.conf.cloud_service_conf import *
 
 _LOGGER = logging.getLogger(__name__)
-MAX_WORKER = 20
-SUPPORTED_FEATURES = ['garbage_collection']
-SUPPORTED_RESOURCE_TYPE = ['inventory.CloudService', 'inventory.CloudServiceType']
-SUPPORTED_SCHEDULES = ['hours']
-DEFAULT_REGION = 'us-east-1'
-FILTER_FORMAT = []
 
 
-@authentication_handler
 class CollectorService(BaseService):
     def __init__(self, metadata):
         super().__init__(metadata)
 
-        self.execute_managers = [
-            'PersonalHealthDashboardManager'
-        ]
-
+    @transaction
     @check_required(['options'])
     def init(self, params):
         """ init plugin by options
@@ -55,7 +45,7 @@ class CollectorService(BaseService):
 
     @transaction
     @check_required(['options', 'secret_data', 'filter'])
-    def list_resources(self, params):
+    def collect(self, params):
         """
         Args:
             params:
@@ -70,21 +60,16 @@ class CollectorService(BaseService):
         start_time = time.time()
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKER) as executor:
-            print("[ EXECUTOR START ]")
             future_executors = []
-            for execute_manager in self.execute_managers:
-                print(f'@@@ {execute_manager} @@@')
-                _manager = self.locator.get_manager(execute_manager)
-                future_executors.append(executor.submit(_manager.collect_resources, params))
 
-        for future in concurrent.futures.as_completed(future_executors):
-            try:
+            _manager = self.locator.get_manager(EXECUTE_MANAGER)
+            future_executors.append(executor.submit(_manager.collect_resources, params))
+
+            for future in concurrent.futures.as_completed(future_executors):
                 for resource in future.result():
                     yield resource.to_primitive()
-            except Exception as e:
-                _LOGGER.error(f'failed to result {e}')
 
-        print(f'TOTAL TIME : {time.time() - start_time} Seconds')
+        _LOGGER.debug(f'[collect] TOTAL FINISHED TIME : {time.time() - start_time} Seconds')
 
     @staticmethod
     def get_account_id(secret_data, region=DEFAULT_REGION):
