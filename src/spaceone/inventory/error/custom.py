@@ -15,3 +15,7 @@ class ERROR_INVALID_CREDENTIALS(ERROR_INVALID_ARGUMENT):
 
 class ERROR_SUBSCRIPTION_REQUIRED(ERROR_BASE):
     _message = 'Upgrade AWS support level(ex. Business, Enterprise)'
+
+
+class ERROR_AWS_BOTO_REQUEST(ERROR_BASE):
+    _message = 'AWS API Request Error. {message}'
