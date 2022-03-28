@@ -31,43 +31,21 @@ class PersonalHealthDashboardConnector(AWSConnector):
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                _LOGGER.info(e)
+                _LOGGER.error(e)
+                raise ERROR_AWS_BOTO_REQUEST(message=e)
 
         except Exception as e:
-            _LOGGER.info(f'Fail to describe events: {e}')
-            return []
+            _LOGGER.error(f'Fail to describe events: {e}')
+            raise ERROR_AWS_BOTO_REQUEST(message=e)
 
     def describe_event_details(self, event_arns):
         try:
             response = self.client.describe_event_details(eventArns=event_arns)
             return response.get('successfulSet', [])
 
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'SubscriptionRequiredException':
-                raise ERROR_SUBSCRIPTION_REQUIRED()
-            else:
-                _LOGGER.info(e)
-
         except Exception as e:
-            _LOGGER.info(f'Fail to describe event details: {e}')
-            return []
-
-    def describe_entity_aggregates(self, event_arn, **query):
-        query = self.generate_query(is_paginate=True, **query)
-
-        try:
-            response = self.client.describe_entity_aggregates(eventArns=event_arn, **query)
-            return response.get('events', [])
-
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'SubscriptionRequiredException':
-                raise ERROR_SUBSCRIPTION_REQUIRED()
-            else:
-                _LOGGER.info(e)
-
-        except Exception as e:
-            _LOGGER.info(f'Fail to describe entity aggregates: {e}')
-            return []
+            _LOGGER.error(f'Fail to describe event details: {e}')
+            raise ERROR_AWS_BOTO_REQUEST(message=e)
 
     def describe_affected_entities(self, **query):
         query = self.generate_query(is_paginate=True, **query)
@@ -82,12 +60,24 @@ class PersonalHealthDashboardConnector(AWSConnector):
 
             return entities
 
+        except Exception as e:
+            _LOGGER.error(f'Fail to describe affected entities: {e}')
+            raise ERROR_AWS_BOTO_REQUEST(message=e)
+
+    def describe_entity_aggregates(self, event_arn, **query):
+        query = self.generate_query(is_paginate=True, **query)
+
+        try:
+            response = self.client.describe_entity_aggregates(eventArns=event_arn, **query)
+            return response.get('events', [])
+
         except ClientError as e:
             if e.response['Error']['Code'] == 'SubscriptionRequiredException':
                 raise ERROR_SUBSCRIPTION_REQUIRED()
             else:
-                _LOGGER.info(e)
+                _LOGGER.error(e)
+                raise ERROR_AWS_BOTO_REQUEST(message=e)
 
         except Exception as e:
-            _LOGGER.info(f'Fail to describe affected entities: {e}')
-            return []
+            _LOGGER.error(f'Fail to describe entity aggregates: {e}')
+            raise ERROR_AWS_BOTO_REQUEST(message=e)
