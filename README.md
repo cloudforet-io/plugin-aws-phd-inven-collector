@@ -46,7 +46,16 @@ authentication privilege for followings:
 
 ## Release Note
 
+### Ver 1.4.2
+Bugfix
+* Error resource (#20)
+
+### Ver 1.4.1
+
+Enhancement
+* Apply Error resource (#19)
+
 ### Ver 1.4
 
-* Add name field for standardization.
+* Add name field for standardization.(#15)
 * Remove to_date filter in query to collect future data all
