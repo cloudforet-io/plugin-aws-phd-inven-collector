@@ -20,7 +20,7 @@ DEFAULT_DAY_FROM_RANGE = 30
 class PersonalHealthDashboardManager(AWSManager):
     connector_name = 'PersonalHealthDashboardConnector'
     cloud_service_group = 'PersonalHealthDashboard'
-    cloud_service_type = 'inventory.CloudService'
+    cloud_service_type = 'Event'
     cloud_service_types = CLOUD_SERVICE_TYPES
 
     def collect_cloud_services(self, params):
