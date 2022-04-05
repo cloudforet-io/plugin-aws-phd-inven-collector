@@ -59,7 +59,7 @@ authentication privilege for followings:
 
 ### Ver 1.4.3
 Bugfix
-* [modify cloud service type]https://github.com/spaceone-dev/plugin-aws-phd-inven-collector/commit/a93be4c7be6e2311b19bee825243fed802020630)
+* [modify cloud service type](https://github.com/spaceone-dev/plugin-aws-phd-inven-collector/commit/a93be4c7be6e2311b19bee825243fed802020630)
 
 ### Ver 1.4.2
 Bugfix
