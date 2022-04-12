@@ -1,0 +1,15 @@
+---
+name: AWS Personal Health Dashboard Collector Plugin
+service_type: inventory.Collector
+provider: aws
+image: spaceone/plugin-aws-phd-inven-collector
+labels:
+  - Personal Health Dashboard
+template: {}
+capability:
+  supported_schema:
+    - aws_access_key
+tags:
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/aws/AWS-Personal-Health-Dashboard.svg
+  description: AWS Personal Health Dashboard collector
+  spaceone:plugin_name: aws-phd-inven-collector
