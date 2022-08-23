@@ -87,6 +87,7 @@ class PersonalHealthDashboardManager(AWSManager):
                 event_data = Event(event, strict=False)
                 event_resource = EventResource({
                     'name': event_data.event_title,
+                    'account': params['account_id'],
                     'data': event_data,
                     'region_code': event.get('region', ''),
                     'reference': ReferenceModel(event_data.reference())
