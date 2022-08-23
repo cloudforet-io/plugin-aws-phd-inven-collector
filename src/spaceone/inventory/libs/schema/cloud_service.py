@@ -17,6 +17,7 @@ class CloudServiceMeta(BaseMetaData):
 
 class CloudServiceResource(Model):
     name = StringType(default='')
+    account = StringType(default='')
     provider = StringType(default="aws")
     cloud_service_type = StringType()
     cloud_service_group = StringType()
