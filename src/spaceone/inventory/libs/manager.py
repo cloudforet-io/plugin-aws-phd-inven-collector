@@ -34,23 +34,27 @@ class AWSManager(BaseManager):
             resources.extend(self.collect_cloud_service_type())
             resources.extend(self.collect_cloud_services(params))
             return resources
-        except Exception as error_message:
-            _LOGGER.error(f'[collect_resources] {error_message}')
+        except Exception as e:
+            _LOGGER.error(f'[ERROR][collect_resources] {e}')
 
-            if isinstance(error_message, dict):
+            if isinstance(e, dict):
                 return [
-                    ErrorResourceResponse(
-                        {'message': json.dumps(error_message),
-                         'resource': {'cloud_service_group': self.cloud_service_group,
-                                      'cloud_service_type': self.cloud_service_type}}
-                    )]
+                    ErrorResourceResponse({
+                        'message': json.dumps(e),
+                        'resource': {
+                            'cloud_service_group': self.cloud_service_group,
+                            'cloud_service_type': self.cloud_service_type
+                        }
+                    })]
             else:
                 return [
-                    ErrorResourceResponse(
-                        {'message': str(error_message),
-                         'resource': {'cloud_service_group': self.cloud_service_group,
-                                      'cloud_service_type': self.cloud_service_type}}
-                    )]
+                    ErrorResourceResponse({
+                        'message': str(e),
+                        'resource': {
+                            'cloud_service_group': self.cloud_service_group,
+                            'cloud_service_type': self.cloud_service_type
+                        }
+                    })]
 
     @staticmethod
     def generate_arn(partition=ARN_DEFAULT_PARTITION, service="", region="", account_id="", resource_type="",
