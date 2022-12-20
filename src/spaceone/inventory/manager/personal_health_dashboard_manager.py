@@ -24,7 +24,7 @@ class PersonalHealthDashboardManager(AWSManager):
     cloud_service_types = CLOUD_SERVICE_TYPES
 
     def collect_cloud_services(self, params):
-        _LOGGER.debug("** Personal Health Dashboard Start **")
+        _LOGGER.debug("[collect_cloud_services] Personal Health Dashboard Start")
         start_time = time.time()
         phd_conn: PersonalHealthDashboardConnector = self.locator.get_connector(self.connector_name, **params)
         phd_conn.set_client()
