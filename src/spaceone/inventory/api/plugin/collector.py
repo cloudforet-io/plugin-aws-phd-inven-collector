@@ -33,7 +33,7 @@ class Collector(BaseAPI, collector_pb2_grpc.CollectorServicer):
             for resource in collector_svc.collect(params):
                 res = {
                     'state': (resource['state']),
-                    'message': '',
+                    'message': resource.get('message', ''),
                     'resource_type': (resource['resource_type']),
                     'match_rules': change_struct_type(resource['match_rules']),
                     'resource': change_struct_type(resource['resource'])
