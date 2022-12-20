@@ -59,15 +59,10 @@ class CollectorService(BaseService):
 
         start_time = time.time()
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKER) as executor:
-            future_executors = []
+        _manager = self.locator.get_manager(EXECUTE_MANAGER)
 
-            _manager = self.locator.get_manager(EXECUTE_MANAGER)
-            future_executors.append(executor.submit(_manager.collect_resources, params))
-
-            for future in concurrent.futures.as_completed(future_executors):
-                for resource in future.result():
-                    yield resource.to_primitive()
+        for resource in _manager.collect_resources(params):
+            yield resource.to_primitive()
 
         _LOGGER.debug(f'[collect] TOTAL FINISHED TIME : {time.time() - start_time} Seconds')
 
