@@ -10,6 +10,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class CollectorService(BaseService):
+    resource = "Collector"
+
     def __init__(self, metadata):
         super().__init__(metadata)
 
